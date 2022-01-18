@@ -8,7 +8,6 @@ class GreatSword extends Weapon
     private $calmDown = 2;
 
     public function __construct() {
-        $this->handed = 2;
         $this->dmg = 12;
     }
 

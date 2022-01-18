@@ -22,7 +22,6 @@ class Swordsman extends Hero {
     }
 
     public function damageEnemy (Hero $enemy, Hero $hero = null) {
-        // проверить содержит ли класс еффекта такой метод
         if (!empty($this->effects)) {
             $this->effects->damageEnemy($enemy, $this);
         } else {

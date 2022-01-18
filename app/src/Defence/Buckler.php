@@ -6,12 +6,7 @@ class Buckler extends Defence
 {
     private $hitsToBlock = 0;
     private $strength = 100;
-    public $reduceIncomingDamage;
     private $blockEveryThHit = 2;
-
-    public function __construct() {
-        $this->reduceIncomingDamage = 'all'; // возможно убрать
-    }
 
     // сделать сеттер для was hit before с проверкой на boolean
     // тогда прийдется делать проверку на тип для каждого свойства
@@ -19,7 +14,7 @@ class Buckler extends Defence
         $this->strength -= 33.33333;
     }
 
-    public function ruinShieldFromAxe (Weapon $weapon) {
+    public function ruinShieldFromWeapon (Weapon $weapon) {
         // получаем название класса оружия которым нанесен удар, и если есть метод снятия прочности щита, вызываем его
         $className = (new \ReflectionClass($weapon))->getShortName();
         $functionName = 'hitBy' . $className;
@@ -27,8 +22,6 @@ class Buckler extends Defence
             $this->$functionName();
     }
 
-    // !!!сделать чтобы функция возвращала колличество урона которое осталось после блокировки
-    // !!!!сделать чтобы отнималась прочность только если урон нанесен по первонажу
     public function blockDamage(Weapon $weapon) {
         if ($this->strength < 1)
             return -1;
@@ -39,8 +32,7 @@ class Buckler extends Defence
             return false;
         } else { // ход блокировки наступил
             $this->hitsToBlock = $this->blockEveryThHit - 1; // если блокируем каждый второй удар, то до следующего блока 2 - 1 = 1 удар
-            // !!!!!переделать чтобы вызов функции не был захардкожен
-            $this->ruinShieldFromAxe($weapon);
+            $this->ruinShieldFromWeapon($weapon);
             return true;
         }
     }

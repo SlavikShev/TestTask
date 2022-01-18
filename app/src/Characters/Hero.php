@@ -18,19 +18,10 @@ abstract class Hero
         return $this->hitPoints > 0 ? $this->hitPoints : 0;
     }
 
-    // пересмотреть спецификаторы доступов у всех свойств и методов
-    // сделать функцию что возвращает здоровье после удара
     // подобавлять везде коментарии на английском
     // удалить Index.php
-    // возможно переделать методы в статические
-    // Доработать чтобы учитавалось одноручное или дворучное оружие
-    // сделать проверку что нельзя добавлять при дворучном орижии еще оружие
-    // создать класс для работы с инвентарем
-    // попробовать переделать создание оружие и брони на фабрику
     // сделать нормальный неймспейсинг типа "Armor\\" : "app\src\Armor"
-    // убрать передачу всего объекта персонажа где нужно только его оружие или броня и передать конкретно их
     // defence и weapon вынести в отдельную папку equipment
-    // если есть щит и одноручное оружие, то заменяем оружие на с большим уроном
     public function engage (Hero $enemy) {
         while ($this->hitPoints > 0 && $enemy->hitPoints > 0) {
             Fight::fight($this, $enemy);
@@ -50,12 +41,10 @@ abstract class Hero
                         if ($blockResult === true) // противник пытается блокировать урон от нас
                             return;
                         if ($blockResult === -1) {
-                            unset($enemy->equipment['Defence'][$key]);
-                            $this->takeOffEquipment($defence);
+                            $this->takeOffEquipment($defence, $enemy, $key);
                         }
                     }
                 }
-                // изменять здоровье через функцию, а не напрямую
                 $enemy->hitPoints -= (!empty($blockResult) ? $blockResult : $damage) - $this->reduceDmg;
             }
         }
@@ -86,9 +75,10 @@ abstract class Hero
             $this->reduceDmg += $defence->reduceDmg;
     }
 
-    public function takeOffEquipment (Defence $defence) {
+    public function takeOffEquipment (Defence $defence, Hero $hero, $key) {
         if (isset($defence->reduceDmg))
             $this->reduceDmg -= $defence->reduceDmg;
+        unset($hero->equipment['Defence'][$key]);
     }
 
     public function replaceWeapon ($currentWeapon, $newWeapon) {

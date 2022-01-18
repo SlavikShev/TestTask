@@ -38,7 +38,7 @@ class Vicious extends Hero {
                             return;
                         if ($blockResult === -1) {
                             unset($enemy->equipment['Defence'][$key]);
-                            $hero->takeOffEquipment($defence);
+                            $hero->takeOffEquipment($defence, $enemy, $key);
                         }
                     }
                 }
