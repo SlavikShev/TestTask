@@ -6,7 +6,7 @@ abstract class Hero
 {
     public $hitPoints;
     public $equipment;
-    private $reduceDmg = 0;
+    public $reduceDmg = 0;
 
     public function __construct() {
         $this->startEquipment();
@@ -30,15 +30,15 @@ abstract class Hero
     // сделать нормальный неймспейсинг типа "Armor\\" : "app\src\Armor"
     // убрать передачу всего объекта персонажа где нужно только его оружие или броня и передать конкретно их
     // defence и weapon вынести в отдельную папку equipment
+    // если есть щит и одноручное оружие, то заменяем оружие на с большим уроном
     public function engage (Hero $enemy) {
         while ($this->hitPoints > 0 && $enemy->hitPoints > 0) {
-            $this->damageEnemy($enemy); // пытаемся нанести урон по противнику
-            $enemy->damageEnemy($this);
+            Fight::fight($this, $enemy);
         }
     }
 
     // наносим урон по противнику
-    private function damageEnemy (Hero $enemy) {
+    public function damageEnemy (Hero $enemy, Hero $hero = null) {
         if ($this->hitPoints > 0) {
             // перебираем все чем мы можем нанести урон
             foreach ($this->equipment['Weapon'] as $weapon) {
@@ -51,6 +51,7 @@ abstract class Hero
                             return;
                         if ($blockResult === -1) {
                             unset($enemy->equipment['Defence'][$key]);
+                            $this->takeOffEquipment($defence);
                         }
                     }
                 }
@@ -66,9 +67,16 @@ abstract class Hero
         $namespace = 'Tournament\\';
         $equip = $namespace . ucfirst($equip);
         $equipType = (new \ReflectionClass($equip))->getParentClass()->getShortName();
-        $this->equipment[$equipType][] = new $equip;
-        if ($equipType == 'Defence')
+        if ($equipType == 'Weapon') {
+            if ($this->equipment[$equipType] == null || $this->replaceWeapon($this->equipment[$equipType][0], new $equip)) {
+                $this->equipment[$equipType] = null;
+                $this->equipment[$equipType][] = new $equip;
+            }
+        } elseif ($equipType == 'Defence') {
+            $this->equipment[$equipType][] = new $equip;
             $this->reduceDamageBecauseOfEquipment(new $equip);
+        }
+
         return $this;
     }
 
@@ -76,5 +84,15 @@ abstract class Hero
     public function reduceDamageBecauseOfEquipment (Defence $defence) {
         if (isset($defence->reduceDmg))
             $this->reduceDmg += $defence->reduceDmg;
+    }
+
+    public function takeOffEquipment (Defence $defence) {
+        if (isset($defence->reduceDmg))
+            $this->reduceDmg -= $defence->reduceDmg;
+    }
+
+    public function replaceWeapon ($currentWeapon, $newWeapon) {
+        if ($currentWeapon->getDamage() < $newWeapon->getDamage())
+            return true;
     }
 }

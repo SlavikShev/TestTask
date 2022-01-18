@@ -4,11 +4,6 @@ namespace Tournament;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-$swordsman = (new Swordsman())->equip("buckler");
-$viking = (new Viking())->equip("buckler");
-
-$swordsman->engage($viking);
-
 //$highlander = new Highlander();
 //$swordsman = (new Swordsman())
 //    ->equip("buckler")
@@ -16,6 +11,15 @@ $swordsman->engage($viking);
 //
 //$swordsman->engage($highlander);
 
+$swordsman = (new Swordsman("Vicious"))
+    ->equip("axe")
+    ->equip("buckler")
+    ->equip("armor");
+
+$highlander = new Highlander("Veteran");
+
+$swordsman->engage($highlander);
+
 echo "<pre>";
-var_dump($viking, $swordsman);
+var_dump($highlander, $swordsman);
 echo "</pre>";

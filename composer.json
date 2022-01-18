@@ -15,7 +15,7 @@
 
   "autoload": {
     "psr-4": {
-      "Tournament\\": ["test/src","app/src/Characters","app/src/Weapon","app/src/Defence"]
+      "Tournament\\": ["test/src","app/src/Characters","app/src/Weapon","app/src/Defence","app/src/Effects","app/src"]
     }
   }
 }
