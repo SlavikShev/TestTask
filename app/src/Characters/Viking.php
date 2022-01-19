@@ -2,7 +2,7 @@
 
 namespace Tournament;
 
-class Viking extends Hero {
+class Viking extends Hero implements IheroStartEquipment {
 
     public function __construct() {
         parent::__construct();

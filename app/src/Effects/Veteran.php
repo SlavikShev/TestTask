@@ -15,10 +15,6 @@ class Veteran extends Hero {
         $this->limit = $this->startHitPoints * $this->healthLimitPercents / 100;
     }
 
-    public function startEquipment() {
-        // TODO: Implement startEquipment() method.
-    }
-
     public function useEffect (Hero $hero) {
         return $hero->hitPoints() < $this->limit;
     }
@@ -30,14 +26,8 @@ class Veteran extends Hero {
             foreach ($hero->equipment['Weapon'] as $weapon) {
                 $damage = $weapon->strike();
 
-                if (!empty($enemy->equipment['Defence'])) {
-                    $blockResult = 0;
-                    foreach ($enemy->equipment['Defence'] as $key => $defence) {
-                        $blockResult = $defence->blockDamage($weapon, $blockResult);
-                        if ($blockResult === -1)
-                            $this->takeOffEquipment($defence, $enemy, $key);
-                    }
-                }
+                $blockResult = $this->processingBlockDamage($enemy, $weapon);
+
                 $finalDamage = (isset($blockResult) && $blockResult !== false ? $blockResult : $damage) - $hero->reduceDmg;
                 $enemy->hitPoints -= $finalDamage;
             }

@@ -2,7 +2,7 @@
 
 namespace Tournament;
 
-class Highlander extends Hero {
+class Highlander extends Hero implements IheroStartEquipment {
 
     public $effects;
 

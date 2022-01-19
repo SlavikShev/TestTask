@@ -2,7 +2,7 @@
 
 namespace Tournament;
 
-abstract class Hero
+abstract class Hero implements IheroStartEquipment
 {
     public $hitPoints;
     public $equipment;
@@ -12,7 +12,9 @@ abstract class Hero
         $this->startEquipment();
     }
 
-    abstract public function startEquipment ();
+    public function startEquipment () {
+
+    }
 
     public function hitPoints () {
         return $this->hitPoints > 0 ? $this->hitPoints : 0;
@@ -30,21 +32,22 @@ abstract class Hero
         if ($this->hitPoints > 0) {
             foreach ($this->equipment['Weapon'] as $weapon) {
                 $damage = $weapon->strike();
-                if (!empty($enemy->equipment['Defence'])) {
-                    $blockResult = 0;
-                    foreach ($enemy->equipment['Defence'] as $key => $defence) {
-                        $blockResult = $defence->blockDamage($weapon, $blockResult);
-                        if ($blockResult === -1)
-                            $this->takeOffEquipment($defence, $enemy, $key);
-                    }
-                }
+                $blockResult = $this->processingBlockDamage($enemy, $weapon);
                 $enemy->hitPoints -= (isset($blockResult) && $blockResult !== false ? $blockResult : $damage) - $this->reduceDmg;
             }
         }
     }
 
-    public function processingBlockDamage () {
-
+    public function processingBlockDamage ($enemy, $weapon) {
+        if (!empty($enemy->equipment['Defence'])) {
+            $blockResult = 0;
+            foreach ($enemy->equipment['Defence'] as $key => $defence) {
+                $blockResult = $defence->blockDamage($weapon, $blockResult);
+                if ($blockResult === -1)
+                    $this->takeOffEquipment($defence, $enemy, $key);
+            }
+            return $blockResult;
+        }
     }
 
     // equip hero

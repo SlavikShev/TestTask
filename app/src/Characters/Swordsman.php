@@ -2,7 +2,7 @@
 
 namespace Tournament;
 
-class Swordsman extends Hero {
+class Swordsman extends Hero implements IheroStartEquipment {
 
     public $effects;
 
