@@ -12,8 +12,9 @@ class Armor extends Defence
         $this->reduceGetDamage = 3;
     }
 
-    public function blockDamage(Weapon $weapon) {
-        $reducedDamage = $weapon->getDamage() - $this->reduceGetDamage;
-        return $reducedDamage > 0 ? $reducedDamage : 0;
+    public function blockDamage(Weapon $weapon, $reducedDamage = false) {
+        $reducedDamage = $reducedDamage !== false ? $weapon->getDamage() - $reducedDamage : 0;
+        $resultDamage = $weapon->getDamage() - $this->reduceGetDamage - $reducedDamage;
+        return $resultDamage > 0 ? $resultDamage : 0;
     }
 }

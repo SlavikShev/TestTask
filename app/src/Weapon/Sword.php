@@ -8,11 +8,11 @@ class Sword extends Weapon
         $this->dmg = 5;
     }
 
-    public function makeDamage() {
+    public function strike() {
         return $this->dmg;
     }
 
     public function getDamage () {
-
+        return $this->dmg;
     }
 }

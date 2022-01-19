@@ -6,7 +6,7 @@ abstract class Weapon
 {
     protected $dmg;
 
-    abstract function makeDamage ();
+    abstract function strike ();
 
     abstract function getDamage();
 }

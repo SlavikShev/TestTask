@@ -11,7 +11,7 @@ class GreatSword extends Weapon
         $this->dmg = 12;
     }
 
-    public function makeDamage() {
+    public function strike() {
         if ($this->hitsToRecharge > 0) {
             $this->hitsToRecharge--;
             return $this->dmg;

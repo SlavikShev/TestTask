@@ -4,5 +4,5 @@ namespace Tournament;
 
 abstract class Defence
 {
-    abstract function blockDamage (Weapon $weapon);
+    abstract function blockDamage (Weapon $weapon, $reducedDamage);
 }

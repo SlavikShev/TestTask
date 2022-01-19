@@ -8,7 +8,7 @@ class Axe extends Weapon
         $this->dmg = 6;
     }
 
-    public function makeDamage() {
+    public function strike() {
         return $this->dmg;
     }
 

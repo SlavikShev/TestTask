@@ -18,40 +18,36 @@ abstract class Hero
         return $this->hitPoints > 0 ? $this->hitPoints : 0;
     }
 
-    // подобавлять везде коментарии на английском
-    // удалить Index.php
-    // сделать нормальный неймспейсинг типа "Armor\\" : "app\src\Armor"
-    // defence и weapon вынести в отдельную папку equipment
+    // fight
     public function engage (Hero $enemy) {
         while ($this->hitPoints > 0 && $enemy->hitPoints > 0) {
             Fight::fight($this, $enemy);
         }
     }
 
-    // наносим урон по противнику
+    // damage enemy
     public function damageEnemy (Hero $enemy, Hero $hero = null) {
         if ($this->hitPoints > 0) {
-            // перебираем все чем мы можем нанести урон
             foreach ($this->equipment['Weapon'] as $weapon) {
-                $damage = $weapon->makeDamage();
-                // перебираем все чем противник может уменьшить урон
-                if (isset($enemy->equipment['Defence'])) {
+                $damage = $weapon->strike();
+                if (!empty($enemy->equipment['Defence'])) {
+                    $blockResult = 0;
                     foreach ($enemy->equipment['Defence'] as $key => $defence) {
-                        $blockResult = $defence->blockDamage($weapon);
-                        if ($blockResult === true) // противник пытается блокировать урон от нас
-                            return;
-                        if ($blockResult === -1) {
+                        $blockResult = $defence->blockDamage($weapon, $blockResult);
+                        if ($blockResult === -1)
                             $this->takeOffEquipment($defence, $enemy, $key);
-                        }
                     }
                 }
-                $enemy->hitPoints -= (!empty($blockResult) ? $blockResult : $damage) - $this->reduceDmg;
+                $enemy->hitPoints -= (isset($blockResult) && $blockResult !== false ? $blockResult : $damage) - $this->reduceDmg;
             }
         }
     }
 
-    // Сделать проверку существует ли такой класс
-    // Сделать создание объекта без хардкода namespace
+    public function processingBlockDamage () {
+
+    }
+
+    // equip hero
     public function equip ($equip) {
         $namespace = 'Tournament\\';
         $equip = $namespace . ucfirst($equip);
@@ -65,22 +61,23 @@ abstract class Hero
             $this->equipment[$equipType][] = new $equip;
             $this->reduceDamageBecauseOfEquipment(new $equip);
         }
-
         return $this;
     }
 
-    //!! сделать функцию destroy внутри классов броня
+    // reduce base hero damage
     public function reduceDamageBecauseOfEquipment (Defence $defence) {
         if (isset($defence->reduceDmg))
             $this->reduceDmg += $defence->reduceDmg;
     }
 
+    // unset equipment from inventory
     public function takeOffEquipment (Defence $defence, Hero $hero, $key) {
         if (isset($defence->reduceDmg))
             $this->reduceDmg -= $defence->reduceDmg;
         unset($hero->equipment['Defence'][$key]);
     }
 
+    // replace old weapon if equip weapon with more damage
     public function replaceWeapon ($currentWeapon, $newWeapon) {
         if ($currentWeapon->getDamage() < $newWeapon->getDamage())
             return true;

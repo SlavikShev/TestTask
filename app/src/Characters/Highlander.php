@@ -21,7 +21,6 @@ class Highlander extends Hero {
     }
 
     public function damageEnemy (Hero $enemy, Hero $hero = null) {
-        // проверить содержит ли класс еффекта такой метод
         if ($this->effects)
             $this->effects->damageEnemy($enemy, $this);
         else

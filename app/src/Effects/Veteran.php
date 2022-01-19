@@ -26,29 +26,23 @@ class Veteran extends Hero {
     public function damageEnemy (Hero $enemy, Hero $hero = null) {
         $effectResult = $this->useEffect($hero);
 
-
         if ($hero->hitPoints > 0) {
-            // перебираем все чем мы можем нанести урон
             foreach ($hero->equipment['Weapon'] as $weapon) {
-                $damage = $weapon->makeDamage();
+                $damage = $weapon->strike();
 
-                // перебираем все чем противник может уменьшить урон
-                if (isset($enemy->equipment['Defence'])) {
+                if (!empty($enemy->equipment['Defence'])) {
+                    $blockResult = 0;
                     foreach ($enemy->equipment['Defence'] as $key => $defence) {
-                        $blockResult = $defence->blockDamage($weapon);
-                        if ($blockResult === true) // противник пытается блокировать урон от нас
-                            return;
-                        if ($blockResult === -1) {
-                            unset($enemy->equipment['Defence'][$key]);
-                            $hero->takeOffEquipment($defence, $enemy, $key);
-                        }
+                        $blockResult = $defence->blockDamage($weapon, $blockResult);
+                        if ($blockResult === -1)
+                            $this->takeOffEquipment($defence, $enemy, $key);
                     }
                 }
-                // изменять здоровье через функцию, а не напрямую
-                $enemy->hitPoints -= (!empty($blockResult) ? $blockResult : $damage) - $hero->reduceDmg;
+                $finalDamage = (isset($blockResult) && $blockResult !== false ? $blockResult : $damage) - $hero->reduceDmg;
+                $enemy->hitPoints -= $finalDamage;
             }
-            if ($effectResult)
-                $enemy->hitPoints -= $this->multipleDamage * $damage - $damage;
+            if ($effectResult && $finalDamage != 0)
+                $enemy->hitPoints -= $this->multipleDamage * $damage - $damage ;
         }
     }
 }

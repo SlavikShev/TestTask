@@ -27,23 +27,17 @@ class Vicious extends Hero {
         $effectResult = $this->useEffect();
 
         if ($hero->hitPoints > 0) {
-            // перебираем все чем мы можем нанести урон
             foreach ($hero->equipment['Weapon'] as $weapon) {
-                $damage = $weapon->makeDamage();
-                // перебираем все чем противник может уменьшить урон
-                if (isset($enemy->equipment['Defence'])) {
+                $damage = $weapon->strike();
+                if (!empty($enemy->equipment['Defence'])) {
+                    $blockResult = 0;
                     foreach ($enemy->equipment['Defence'] as $key => $defence) {
-                        $blockResult = $defence->blockDamage($weapon);
-                        if ($blockResult === true) // противник пытается блокировать урон от нас
-                            return;
-                        if ($blockResult === -1) {
-                            unset($enemy->equipment['Defence'][$key]);
-                            $hero->takeOffEquipment($defence, $enemy, $key);
-                        }
+                        $blockResult = $defence->blockDamage($weapon, $blockResult);
+                        if ($blockResult === -1)
+                            $this->takeOffEquipment($defence, $enemy, $key);
                     }
                 }
-                // изменять здоровье через функцию, а не напрямую
-                $enemy->hitPoints -= (!empty($blockResult) ? $blockResult : $damage) - $hero->reduceDmg;
+                $enemy->hitPoints -= (isset($blockResult) && $blockResult !== false ? $blockResult : $damage) - $hero->reduceDmg;
             }
             if ($effectResult)
                 $enemy->hitPoints -= $this->additionalDamage;
