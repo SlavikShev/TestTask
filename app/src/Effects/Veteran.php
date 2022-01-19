@@ -10,7 +10,6 @@ class Veteran extends Hero {
     public $limit;
 
     public function __construct($startHitPoints) {
-        parent::__construct();
         $this->startHitPoints = $startHitPoints;
         $this->limit = $this->startHitPoints * $this->healthLimitPercents / 100;
     }

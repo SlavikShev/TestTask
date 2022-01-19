@@ -2,19 +2,11 @@
 
 namespace Tournament;
 
-abstract class Hero implements IheroStartEquipment
+abstract class Hero
 {
     public $hitPoints;
     public $equipment;
     public $reduceDmg = 0;
-
-    public function __construct() {
-        $this->startEquipment();
-    }
-
-    public function startEquipment () {
-
-    }
 
     public function hitPoints () {
         return $this->hitPoints > 0 ? $this->hitPoints : 0;

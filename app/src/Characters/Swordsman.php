@@ -2,12 +2,12 @@
 
 namespace Tournament;
 
-class Swordsman extends Hero implements IheroStartEquipment {
+class Swordsman extends Hero{
 
     public $effects;
 
     public function __construct($effect = null) {
-        parent::__construct();
+        $this->startEquipment();
         $this->hitPoints = 100;
         if ($effect !== null) {
             $namespace = 'Tournament\\';
